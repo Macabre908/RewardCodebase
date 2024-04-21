@@ -12,17 +12,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-/**
- * Loads accounts from a data source using the JDBC API.
- */
-
-/* TODO-05: Let this class to be found in component-scanning
- * - Annotate the class with an appropriate stereotype annotation
- *   to cause component-scan to detect and load this bean.
- * - Inject dataSource by annotating setDataSource() method
- *   with @Autowired.
- */
-
 
 @Repository
 public class JdbcAccountRepository implements AccountRepository {

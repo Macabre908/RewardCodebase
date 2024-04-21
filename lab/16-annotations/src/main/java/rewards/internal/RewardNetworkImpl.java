@@ -14,25 +14,6 @@ import rewards.internal.reward.RewardRepository;
 
 import common.money.MonetaryAmount;
 
-/**
- * Rewards an Account for Dining at a Restaurant.
- * 
- * The sole Reward Network implementation. This class is an
- * application-layer service responsible for coordinating with
- * the domain-layer to carry out the process of rewarding benefits
- * to accounts for dining.
- * 
- * Said in other words, this class implements the "reward account
- * for dining" use case.
- */
-
-/* TODO-03: Let this class to be found in component-scanning
- * - Annotate this class with an appropriate stereotype annotation
- *   to cause component-scanning to create a Spring bean from this class.
- * - Inject all 3 dependencies.  Decide if you should use field
- *   injection or constructor injection.
- */
-
 @Service
 public class RewardNetworkImpl implements RewardNetwork {
 
