@@ -7,9 +7,6 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 
 import javax.sql.DataSource;
 
-/* TODO-05: Update this configuration class so that its
- *          beans are members of the "local" profile.
- */
 @Configuration
 @Profile("local")
 public class TestInfrastructureLocalConfig {

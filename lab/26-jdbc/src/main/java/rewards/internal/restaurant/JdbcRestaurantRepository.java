@@ -2,6 +2,7 @@ package rewards.internal.restaurant;
 
 import common.money.Percentage;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import rewards.Dining;
 import rewards.internal.account.Account;
 
@@ -15,49 +16,21 @@ import java.sql.SQLException;
  * Loads restaurants from a data source using the JDBC API.
  */
 
-// TODO-09 (Optional) : Inject JdbcTemplate directly to this repository class
-// - Refactor the constructor to get the JdbcTemplate injected directly
-//   (instead of DataSource getting injected)
-// - Refactor RewardsConfig accordingly
-// - Refactor JdbcRestaurantRepositoryTests accordingly
-// - Run JdbcRestaurantRepositoryTests and verity it passes
-
-// TODO-04: Refactor the cumbersome low-level JDBC code to use JdbcTemplate.
-// - Run JdbcRestaurantRepositoryTests and verity it passes
-// - Add a field of type JdbcTemplate
-// - Refactor the code in the constructor to instantiate JdbcTemplate object
-//   from the given DataSource object
-// - Refactor findByMerchantNumber(..) to use the JdbcTemplate and a RowMapper
-//
-//   #1: Create a RowMapper object and pass it to the
-//       jdbcTemplate.queryForObject(..) method as an argument
-//	 #2: The mapRestaurant(..) method provided in this class contains
-//	     logic, which the RowMapper may wish to use
-//
-// - Run JdbcRestaurantRepositoryTests again and verity it passes
-
 public class JdbcRestaurantRepository implements RestaurantRepository {
 
 	private DataSource dataSource;
 
+	private JdbcTemplate jdbcTemplate;
+
 	public JdbcRestaurantRepository(DataSource dataSource) {
 		this.dataSource = dataSource;
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
 	public Restaurant findByMerchantNumber(String merchantNumber) {
 		String sql = "select MERCHANT_NUMBER, NAME, BENEFIT_PERCENTAGE, BENEFIT_AVAILABILITY_POLICY"
 				+ " from T_RESTAURANT where MERCHANT_NUMBER = ?";
-		Restaurant restaurant = null;
-
-		try (Connection conn = dataSource.getConnection();
-			 PreparedStatement ps = conn.prepareStatement(sql) ){
-			ps.setString(1, merchantNumber);
-			ResultSet rs = ps.executeQuery();
-			advanceToNextRow(rs);
-			restaurant = mapRestaurant(rs);
-		} catch (SQLException e) {
-			throw new RuntimeException("SQL exception occurred finding by merchant number", e);
-		}
+		Restaurant restaurant = this.jdbcTemplate.queryForObject(sql, this::mapRestaurant, merchantNumber);
 
 		return restaurant;
 	}
@@ -66,7 +39,7 @@ public class JdbcRestaurantRepository implements RestaurantRepository {
 	 * Maps a row returned from a query of T_RESTAURANT to a Restaurant object.
 	 * @param rs the result set with its cursor positioned at the current row
 	 */
-	private Restaurant mapRestaurant(ResultSet rs) throws SQLException {
+	private Restaurant mapRestaurant(ResultSet rs, int rowNum) throws SQLException {
 		// Get the row column data
 		String name = rs.getString("NAME");
 		String number = rs.getString("MERCHANT_NUMBER");

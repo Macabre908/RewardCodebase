@@ -23,14 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * application for use in a test environment.
  */
 
-/* TODO-08 (Optional): Create an inner static class from TestInfrastructureConfig
- * - Once inner static class is created, remove configuration
- *   class reference to TestInfrastructureConfig class from the annotation
- *   you added to this class in TO DO-01 above. (For more detailed on, refer tp
- *   lab document.)
- * - Run the test again.
- */
-
 @ActiveProfiles({"jndi", "jdbc"})
 @SpringJUnitConfig()
 public class RewardNetworkTests {

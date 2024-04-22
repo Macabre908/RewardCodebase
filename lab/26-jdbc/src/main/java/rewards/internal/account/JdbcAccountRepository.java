@@ -3,6 +3,7 @@ package rewards.internal.account;
 import common.money.MonetaryAmount;
 import common.money.Percentage;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -14,31 +15,16 @@ import java.sql.SQLException;
  * Loads accounts from a data source using the JDBC API.
  */
 
-// TODO-10 (Optional) : Inject JdbcTemplate directly to this repository class
-// - Refactor the constructor to get the JdbcTemplate injected directly
-//   (instead of DataSource getting injected)
-// - Refactor RewardsConfig accordingly
-// - Refactor JdbcAccountRepositoryTests accordingly
-// - Run JdbcAccountRepositoryTests and verity it passes
-
-// TODO-05: Refactor this repository to use JdbcTemplate.
-// - Add a field of type JdbcTemplate.
-// - Refactor the code in the constructor to instantiate the JdbcTemplate
-//   object using the given DataSource object.
 public class JdbcAccountRepository implements AccountRepository {
 
 	private DataSource dataSource;
 
+	private JdbcTemplate jdbcTemplate;
+
 	public JdbcAccountRepository(DataSource dataSource) {
 		this.dataSource = dataSource;
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
-
-	// TODO-07 (Optional): Refactor this method using JdbcTemplate and ResultSetExtractor
-	// - Create a ResultSetExtractor object and pass it as an argument
-	//   to jdbcTemplate.query(..) method
-	// - Let the extractData() method of the ResultSetExtractor to call
-	//   mapAccount() method, which is provided in this class, to do all the work.
-    // - Run the JdbcAccountRepositoryTests class. It should pass.
 	public Account findByCreditCard(String creditCardNumber) {
 		String sql = "select a.ID as ID, a.NUMBER as ACCOUNT_NUMBER, a.NAME as ACCOUNT_NAME, c.NUMBER as CREDIT_CARD_NUMBER, " +
 			"	b.NAME as BENEFICIARY_NAME, b.ALLOCATION_PERCENTAGE as BENEFICIARY_ALLOCATION_PERCENTAGE, b.SAVINGS as BENEFICIARY_SAVINGS " +
@@ -84,43 +70,18 @@ public class JdbcAccountRepository implements AccountRepository {
 		}
 		return account;
 	}
-
-	// TODO-06: Refactor this method to use JdbcTemplate.
-	// - Note that an account has multiple beneficiaries
-	//   and you are going to perform UPDATE operation using
-	//   JdbcTemplate for each of those beneficiaries
-	// - Rerun the JdbcAccountRepositoryTests and verify it passes
 	public void updateBeneficiaries(Account account) {
 		String sql = "update T_ACCOUNT_BENEFICIARY SET SAVINGS = ? where ACCOUNT_ID = ? and NAME = ?";
-		Connection conn = null;
-		PreparedStatement ps = null;
-		try {
-			conn = dataSource.getConnection();
-			ps = conn.prepareStatement(sql);
-			for (Beneficiary beneficiary : account.getBeneficiaries()) {
-				ps.setBigDecimal(1, beneficiary.getSavings().asBigDecimal());
-				ps.setLong(2, account.getEntityId());
-				ps.setString(3, beneficiary.getName());
-				ps.executeUpdate();
-			}
-		} catch (SQLException e) {
-			throw new RuntimeException("SQL exception occurred updating beneficiary savings", e);
-		} finally {
-			if (ps != null) {
-				try {
-					// Close to prevent database cursor exhaustion
-					ps.close();
-				} catch (SQLException ex) {
-				}
-			}
-			if (conn != null) {
-				try {
-					// Close to prevent database connection exhaustion
-					conn.close();
-				} catch (SQLException ex) {
-				}
-			}
+
+		for(Beneficiary beneficiary: account.getBeneficiaries()) {
+			this.jdbcTemplate.update(
+					sql,
+					beneficiary.getSavings().asBigDecimal(),
+					account.getEntityId(),
+					beneficiary.getName()
+			);
 		}
+
 	}
 
 	/**
