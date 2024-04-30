@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import rewards.RewardNetwork;
 import rewards.internal.RewardNetworkImpl;
 import rewards.internal.account.AccountRepository;
@@ -27,18 +28,7 @@ public class RewardsConfig {
 	public RewardsConfig(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
-
-    // TODO-10 (Optional) : Switch back to explicit `DataSource` configuration
-    // (Instead of using auto-configured DataSource, we are going to configure
-    //  our own DataSource bean. Normally we want to configure infra-structure
-    //  bean such as DataSource bean in a separate configuration class but
-    //  here for the sake of simplicity, we configure it along with application
-    //  beans.)
-    // - Uncomment @Bean method below
-    // - Remove the code above that performs DataSource injection
-    // - Fix compile errors in this code
-    /*
-    @Bean
+    /*@Bean
     public DataSource dataSource() {
         logger.debug("Creating the datasource bean explicitly");
 
@@ -47,8 +37,7 @@ public class RewardsConfig {
                         .addScript("classpath:schema.sql")
                         .addScript("classpath:data.sql")
                         .build();
-    }
-    */
+    }*/
 
     @Bean
     public RewardNetwork rewardNetwork() {
