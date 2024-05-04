@@ -3,14 +3,10 @@ package accounts.web;
 import accounts.AccountManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import rewards.internal.account.Account;
 
@@ -88,10 +84,4 @@ public class AccountControllerBootTests {
 			throw new RuntimeException(e);
 		}
 	}
-
-	// TODO-13 (Optional): Experiment with @MockBean vs @Mock
-	// - Change `@MockBean` to `@Mock` for the `AccountManager dependency above
-	// - Run the test and observe a test failure
-	// - Change it back to `@MockBean`
-
 }

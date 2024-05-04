@@ -23,11 +23,6 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-// TODO-20 (Optional): Perform security testing for the user added
-//          through custom AuthenticationProvider
-// - Remove @Disabled annotation from the test and run it
-// - Make sure the test passes
-
 @WebMvcTest(AccountController.class)
 @ContextConfiguration(classes = {RestWsApplication.class, RestSecurityConfig.class, CustomAuthenticationProvider.class})
 public class AccountControllerCustomAuthenticationProviderTests {
@@ -42,7 +37,6 @@ public class AccountControllerCustomAuthenticationProviderTests {
     private AccountService accountService;
 
     @Test
-    @Disabled
     public void accountDetails_with_spring_credentials_should_return_200() throws Exception {
 
         // arrange
