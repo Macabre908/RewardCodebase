@@ -17,17 +17,6 @@ import javax.sql.DataSource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-/**
- * A system test that verifies the components of the RewardNetwork application
- * work together to reward for dining successfully. Uses Spring to bootstrap the
- * application for use in a test environment.
- *
- * TODO-04: Save all work, run this RewardNetworkTests below.  It should pass.
- *  (If you are using Gradle, remove all exclude statements
- *  from the build.gradle file before running the test.)
- * - Notice that we have enabled DEBUG logging in setup() below.
- * - Check the logging output. Is only ONE connection being used?
- */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = { SystemTestConfig.class })
 public class RewardNetworkTests {
